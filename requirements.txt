@@ -1,0 +1,14 @@
+langchain_community
+tiktoken
+langchain-openai
+langchainhub
+chromadb
+langchain
+cohere
+langchain-text-splitters
+langchain-google-genai
+arxiv
+langgraph
+unstructured
+tavily-python
+pymupdf

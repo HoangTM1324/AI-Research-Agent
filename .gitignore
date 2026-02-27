@@ -1,0 +1,5 @@
+﻿.venv/
+.env
+transformer.pdf
+**/__pycache__/
+*.py[cod]
