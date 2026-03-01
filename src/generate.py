@@ -18,7 +18,8 @@ def check_content_from_db_retrieve_node(state: GraphState):
     for doc, res in zip(state["documents"], response):
         if res.lower() == "relevant":
             new_docs.append(doc)
-    state["documents"]= new_docs
+    return {"documents": new_docs}
+
 
 def generate_answer_node(state: GraphState):
     system_prompt= """You are an expert academic research assistant. Your task is to generate a comprehensive and accurate answer to the user's question based on the retrieved content from the database. Your answer should be well-structured, concise, and directly address the user's question."""
@@ -28,7 +29,7 @@ def generate_answer_node(state: GraphState):
         HumanMessage(content= user_prompt)
     ]
     response= llm.invoke(message).stript()
-    state["generation"]= response
+    return {"generation": response}
     
 
 
