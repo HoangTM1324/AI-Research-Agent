@@ -48,12 +48,13 @@ def generate_web_subquestions_node(state: GraphState):
     return content
 
 
-def web_search_node(content):
+def web_search_node(state: GraphState):
     print("--- Web Search ---")
     web_search_tool = TavilySearchResults(k=3)
     web_results= []
     state= []
     system_prompt= f"""You are an expert academic research assistant. Your task is to determine if the retrieved web search results are relevant to the user's question or not. Your output should return value "relevant" if the retrieved web search results are relevant to user's question. Ortherwise, return "irrelevant". Here is the question: {content}"""
+    content = generate_web_subquestions_node(state)
     for c in content:
         search_data = web_search_tool.invoke(c)
         web_results.append(search_data)
