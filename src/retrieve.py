@@ -2,7 +2,7 @@ import getpass
 import os
 import chromadb
 from dotenv import load_dotenv
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 import arxiv
 from langchain_core.documents import Document
@@ -19,6 +19,9 @@ def retrieve_from_chromadb_node(state: GraphState):
     collection= client.get_or_create_collection(name="pdf_chunks")
     query= state["question"]
     results= collection.query(query_texts= query, n_results= 3)
+    if not results["documents"] or len(results["documents"][0]) == 0:
+        print("--- NO DOCUMENTS FOUND IN DB ---")
+        return {"documents": []}
     return {"documents": results["documents"][0]}
 
 def generate_web_subquestions_node(state: GraphState):
@@ -42,7 +45,6 @@ def generate_web_subquestions_node(state: GraphState):
     ]
 
     response = llm.invoke(messages)
-    print(response.content)
     content = response.content.split("\n")
     return {"subquestions": content}
 

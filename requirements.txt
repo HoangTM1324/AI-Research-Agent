@@ -12,3 +12,5 @@ langgraph
 unstructured
 tavily-python
 pymupdf
+uvicorn
+python-multipart

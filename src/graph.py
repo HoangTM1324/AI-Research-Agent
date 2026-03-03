@@ -26,13 +26,20 @@ def build_graph():
     workflow.add_node("generate_answer", generate_answer_node)
 
     workflow.add_edge(START, "categorizer")
-    workflow.add_conditional_edge("categorizer", 
+    workflow.add_conditional_edges("categorizer", 
                                   check_resource_node, 
                                   {
                                       "pdf": "local_pdf", 
                                       "web": "retrieve_db"}
                                   )
     
-    workflow.add_edge("local_pdf", "generate_answer")
+    workflow.add_edge("local_pdf", "generate_subquestions")
+    workflow.add_edge("generate_subquestions", "web_search")
+    workflow.add_edge("retrieve_db", "check_db_retrieve")
+    workflow.add_edge("check_db_retrieve", "generate_subquestions")
+    workflow.add_edge("web_search", "generate_answer")
+    workflow.add_edge("generate_answer", END)
 
-    workflow.add_edge("retrieve_db")
+    return workflow.compile()
+
+
