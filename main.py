@@ -6,11 +6,11 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 import shutil
-
+from fastapi.responses import StreamingResponse
+import asyncio
 
 app = FastAPI()
 graph_app = build_graph()
-
 
 initial_input = {
     "question": "",
@@ -31,7 +31,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     question: str
     file_path: Optional[str] = None
-    
+
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -59,10 +59,6 @@ async def handle_chat(request: ChatRequest):
 
     return {"answer": final_state["generation"]}
 
-
-
 # print("--- ĐANG CHẠY GRAPH ---")
 # final_state = app.invoke(initial_input)
-
 # print("\n--- KẾT QUẢ CUỐI CÙNG ---")
-
