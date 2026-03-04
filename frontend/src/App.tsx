@@ -50,7 +50,6 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* KHU VỰC HIỂN THỊ TIN NHẮN */}
       <main className="chat-window">
         {messages.length === 0 && (
           <div className="welcome-text">How are you today?</div>
@@ -67,7 +66,6 @@ function App() {
         {isLoading && <div className="loading-dots">AI is processing...</div>}
       </main>
 
-      {/* THANH NHẬP LIỆU */}
       <footer className="input-area">
         <div className="input-wrapper">
           <input 

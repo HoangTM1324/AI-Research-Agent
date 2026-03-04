@@ -4,7 +4,6 @@ from .schema import GraphState
 from .generate import generate_answer_node, check_content_from_db_retrieve_node
 from langgraph.graph import END, StateGraph, START
 
-
 def categorizer_node(state: GraphState):
     return state
 
