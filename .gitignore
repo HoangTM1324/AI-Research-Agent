@@ -3,3 +3,4 @@
 transformer.pdf
 **/__pycache__/
 *.py[cod]
+uploads/
