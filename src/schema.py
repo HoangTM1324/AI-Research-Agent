@@ -7,3 +7,4 @@ class GraphState(TypedDict):
     web_search: str
     documents: List[Document]
     file_path: str
+    subquestions: List[str]
