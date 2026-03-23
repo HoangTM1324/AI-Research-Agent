@@ -8,3 +8,4 @@ class GraphState(TypedDict):
     documents: List[Document]
     file_path: str
     subquestions: List[str]
+    loop_step: int
