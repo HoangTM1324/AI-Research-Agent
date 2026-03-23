@@ -12,32 +12,6 @@ This project is a sophisticated **AI Research Assistant** built with a **FastAPI
 graph TD
 	__start__([<font size=5><b>START</b></font>]) --> categorizer
 	
-	%% Rẽ nhánh từ categorizer
-	categorizer -.->|pdf| local_pdf
-	categorizer -.->|web| retrieve_db
-	
-	%% Nhánh PDF
-	local_pdf --> generate_subquestions
-	
-	%% Nhánh Web
-	retrieve_db --> check_db_retrieve
-	check_db_retrieve --> generate_subquestions
-	
-	%% Điểm hội tụ và kết thúc
-	generate_subquestions --> web_search
-	web_search --> generate_answer
-	generate_answer --> __end__([<font size=5><b>END</b></font>])
-
-	style __start__ stroke:#333,stroke-width:2px
-	style __end__ stroke:#333,stroke-width:2px
-```
-
----
-
-```mermaid
-graph TD
-	__start__([<font size=5><b>START</b></font>]) --> categorizer
-	
 	categorizer -.->|pdf| local_pdf
 	categorizer -.->|web| retrieve_db
 	
