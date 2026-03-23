@@ -1,30 +1,16 @@
 from .schema import GraphState
 import hashlib
-import chromadb
+import uuid
+import os
+from dotenv import load_dotenv
+from qdrant_client import QdrantClient, models
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-
-
-def generate_chunk_id(content: str):
-    """
-    Generate a unique chunk ID based on the content using SHA-256 hashing.
-    
-    Args:
-        Input:
-            content (str): The text content of the chunk for which to generate an ID.
-        Output:
-            str: A unique chunk ID derived from the content.
-    """
-
-    # Encode the content to bytes
-    content_bytes = content.encode('utf-8')
-    
-    # Create a SHA-256 hash of the content
-    hash_object = hashlib.sha256(content_bytes)
-    content_hash = hash_object.hexdigest()
-    
-    return f"chunk_{content_hash[:16]}"
+load_dotenv()
+client= QdrantClient(url= os.getenv("QDRANT_HOST"), api_key= os.getenv("QDRANT_API_KEY"))
+embeddings= GoogleGenerativeAIEmbeddings(model="gemini-embedding-001", output_dimensionality=768)
 
 def process_local_pdf_node(state: GraphState):
     file_path = state["file_path"]
@@ -37,15 +23,27 @@ def process_local_pdf_node(state: GraphState):
 
         chunks= text_splitter.split_documents(data)
         chunk_ids = []
-        client= chromadb.Client()
-        collection= client.get_or_create_collection(name="pdf_chunks")
-        for chunk in chunks:
-            chunk_id = generate_chunk_id(chunk.page_content)
-            chunk_ids.append(chunk_id)
-            collection.upsert(documents= chunk.page_content,
-                          ids= chunk_id)
-        return {"documents": chunks, "ids": chunk_ids}
+        data= [d.page_content for d in chunks]
+        if not client.collection_exists(collection_name="pdf_chunk"):
+            collection= client.create_collection(collection_name="pdf_chunk",
+                                                 vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
+        vectors= embeddings.embed_documents(data)
+
+        points= []
+        for i, chunk in enumerate(chunks):
+            point = models.PointStruct(
+                id = str(uuid.uuid5(uuid.NAMESPACE_DNS ,chunk.page_content)),
+                vector= vectors[i],
+                payload= {"text": chunk.page_content}
+            )
+            points.append(point)
+            
+        client.upsert(collection_name= "pdf_chunk", points= points)
+
+        
+
+        return {"file_path": ""}
     else:
-        return {"documents": [], "ids": []}
+        return {"file_path": ""}
     
 

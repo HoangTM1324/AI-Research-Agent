@@ -18,7 +18,8 @@ initial_input = {
     "web_search": "",
     "documents": [],
     "file_path": "",
-    "subquestions": [] 
+    "subquestions": [],
+    "loop_step": 0
 }
 
 app.add_middleware(
@@ -59,6 +60,4 @@ async def handle_chat(request: ChatRequest):
 
     return {"answer": final_state["generation"]}
 
-# print("--- ĐANG CHẠY GRAPH ---")
-# final_state = app.invoke(initial_input)
-# print("\n--- KẾT QUẢ CUỐI CÙNG ---")
+
