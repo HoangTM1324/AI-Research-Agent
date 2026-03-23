@@ -24,8 +24,14 @@ def process_local_pdf_node(state: GraphState):
         chunks= text_splitter.split_documents(data)
         chunk_ids = []
         data= [d.page_content for d in chunks]
-        if not client.collection_exists(collection_name="pdf_chunk"):
+
+        if client.collection_exists(collection_name="pdf_chunk"):
+            client.delete_collection(collection_name="pdf_chunk")  
             collection= client.create_collection(collection_name="pdf_chunk",
+                                                 vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))    
+
+        if not client.collection_exists(collection_name="global_pdf_chunk"):
+            collection= client.create_collection(collection_name="global_pdf_chunk",
                                                  vectors_config=models.VectorParams(size=768, distance=models.Distance.COSINE))
         vectors= embeddings.embed_documents(data)
 
@@ -37,9 +43,9 @@ def process_local_pdf_node(state: GraphState):
                 payload= {"text": chunk.page_content}
             )
             points.append(point)
-            
+        
         client.upsert(collection_name= "pdf_chunk", points= points)
-
+        client.upsert(collection_name= "global_pdf_chunk", points= points)
         
 
         return {"file_path": ""}

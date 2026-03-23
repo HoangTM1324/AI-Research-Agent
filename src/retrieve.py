@@ -25,13 +25,13 @@ def retrieve_from_qdrant_node(state: GraphState):
     print("--- RETRIEVING FROM DATABASE ---")
     client= QdrantClient(url= os.getenv("QDRANT_HOST"), api_key= os.getenv("QDRANT_API_KEY"))
 
-    if not client.collection_exists("pdf_chunk"):
+    if not client.collection_exists("global_pdf_chunk"):
         return {"documents": []}
     
     question_vector = embeddings.embed_query(state["question"])
 
     search_result= client.query_points(
-        collection_name="pdf_chunk",
+        collection_name="global_pdf_chunk",
         query=question_vector,
         limit=7
     )
