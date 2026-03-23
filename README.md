@@ -1,6 +1,3 @@
-Here is the comprehensive **README.md** file for your project, written in professional English, focusing on the Docker implementation and the project's architecture.
-
----
 
 # AI Research Assistant (Dockerized)
 
