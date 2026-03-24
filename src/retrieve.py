@@ -24,24 +24,44 @@ generated_sub_question= []
 def retrieve_from_qdrant_node(state: GraphState):
     print("--- RETRIEVING FROM DATABASE ---")
     client= QdrantClient(url= os.getenv("QDRANT_HOST"), api_key= os.getenv("QDRANT_API_KEY"))
-
-    if not client.collection_exists("global_pdf_chunk"):
-        return {"documents": []}
     
-    question_vector = embeddings.embed_query(state["question"])
+    if state["file_path"] == "":
 
-    search_result= client.query_points(
-        collection_name="global_pdf_chunk",
-        query=question_vector,
-        limit=7
-    )
+        if not client.collection_exists("global_pdf_chunk"):
+            return {"documents": []}
+        
+        question_vector = embeddings.embed_query(state["question"])
 
-    retrieved_docs = [
-    Document(page_content=hit.payload["text"]) 
-    for hit in search_result.points
-    ]
+        search_result= client.query_points(
+            collection_name="global_pdf_chunk",
+            query=question_vector,
+            limit=7
+        )
 
-    return {"documents": retrieved_docs}
+        retrieved_docs = [
+        Document(page_content=hit.payload["text"]) 
+        for hit in search_result.points
+        ]
+
+        return {"documents": retrieved_docs}
+    else:
+        if not client.collection_exists("pdf_chunk"):
+            return {"documents": []}
+        
+        question_vector = embeddings.embed_query(state["question"])
+
+        search_result= client.query_points(
+            collection_name="pdf_chunk",
+            query=question_vector,
+            limit=7
+        )
+
+        retrieved_docs = [
+        Document(page_content=hit.payload["text"]) 
+        for hit in search_result.points
+        ]
+
+        return {"documents": retrieved_docs}
 
 def generate_web_subquestions_node(state: GraphState):
     user_input = state["question"]
